@@ -203,3 +203,137 @@ LOG_LEVEL=info
   }
 }
 ```
+
+## Deployment Guide
+
+### Prerequisites
+- GitHub account
+- Heroku account
+- MongoDB Atlas account (for production database)
+
+### MongoDB Atlas Setup
+1. Create a MongoDB Atlas account if you don't have one
+2. Create a new cluster (free tier is sufficient to start)
+3. Configure database access:
+   - Create a database user
+   - Save the credentials securely
+4. Configure network access:
+   - Add `0.0.0.0/0` to IP whitelist for Heroku deployment
+5. Get your MongoDB connection string:
+   - Click "Connect"
+   - Choose "Connect your application"
+   - Copy the connection string
+
+### Heroku Deployment Steps
+
+1. **Initial Setup**
+   - Fork/clone this repository to your GitHub account
+   - Create a new app on Heroku
+   - Connect your GitHub repository to Heroku
+   - Enable automatic deploys from main/master branch (optional)
+
+2. **Environment Variables Configuration**
+   On Heroku dashboard:
+   - Go to Settings → Config Vars
+   - Add the following environment variables:
+     ```
+     NODE_ENV=production
+     MONGODB_URI=your_mongodb_atlas_connection_string
+     JWT_SECRET=your_secure_jwt_secret
+     JWT_EXPIRES_IN=24h
+     PORT=not required (Heroku sets this automatically)
+     CORS_ORIGIN=your_frontend_url
+     ```
+
+3. **Deploy Application**
+   - Option 1: Automatic Deployment
+     - Enable automatic deploys from your main/master branch
+     - Every push to main will trigger a deployment
+   
+   - Option 2: Manual Deployment
+     - Go to the "Deploy" tab in Heroku
+     - Scroll to "Manual deploy"
+     - Choose your branch and click "Deploy Branch"
+
+4. **Verify Deployment**
+   - Check build logs for any errors
+   - Once deployed, click "Open app" to get your API URL
+   - Test the health check endpoint: `your-app-url/health`
+   - Monitor the application logs in Heroku dashboard
+
+### Post-Deployment Verification
+
+1. **API Health Check**
+```
+curl https://your-app-name.herokuapp.com/health
+
+```
+
+2. **Authentication Test**
+```
+curl -X POST https://your-app-name.herokuapp.com/api/auth/login 
+
+-H "Content-Type: application/json" 
+
+-d '{"email":"your_email","password":"your_password"}'
+
+```
+
+### Production Considerations
+
+1. **Database**
+- MongoDB Atlas free tier limitations:
+  - 512MB storage
+  - Shared RAM and vCPU
+  - Consider upgrading for production workloads
+
+2. **Heroku**
+- Free tier limitations:
+  - Dyno sleeps after 30 minutes of inactivity
+  - 550-1000 dyno hours per month
+  - Consider upgrading for production workloads
+
+3. **Monitoring**
+- Use Heroku metrics dashboard
+- Monitor MongoDB Atlas metrics
+- Set up alerts for critical metrics
+
+### Troubleshooting
+
+Common issues and solutions:
+
+1. **Application Errors**
+- Check Heroku logs: Dashboard → More → View logs
+- Common command: `heroku logs --tail`
+
+2. **Database Connection Issues**
+- Verify MongoDB URI in config vars
+- Check IP whitelist in MongoDB Atlas
+- Verify database user credentials
+
+3. **Performance Issues**
+- Check Heroku metrics dashboard
+- Monitor MongoDB Atlas performance metrics
+- Consider upgrading plan if necessary
+
+### Maintenance
+
+1. **Regular Tasks**
+- Monitor application logs
+- Check database usage and performance
+- Review and update dependencies
+- Backup database regularly
+
+2. **Scaling**
+- Monitor resource usage
+- Scale dynos as needed
+- Upgrade MongoDB Atlas tier if required
+
+### Support
+
+For deployment issues:
+1. Check Heroku status: [Heroku Status](https://status.heroku.com/)
+2. MongoDB Atlas status: [MongoDB Status](https://status.mongodb.com/)
+3. Review application logs in Heroku dashboard
+4. Contact support team if needed
+
