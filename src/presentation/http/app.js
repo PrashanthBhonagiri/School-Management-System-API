@@ -33,6 +33,8 @@ class App {
                 timestamp: new Date().toISOString()
             });
         });
+
+        this.app.use('/api/auth', require('../../domains/auth/routes'));
     }
 
     setupErrorHandling() {
