@@ -40,6 +40,8 @@ class App {
 
         this.app.use('/api/classrooms', require('../../domains/classroom/routes'));
 
+        this.app.use('/api/students', require('../../domains/student/routes'));
+
 
     }
 
