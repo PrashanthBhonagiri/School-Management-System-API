@@ -38,6 +38,9 @@ class App {
 
         this.app.use('/api/schools', require('../../domains/school/routes'));
 
+        this.app.use('/api/classrooms', require('../../domains/classroom/routes'));
+
+
     }
 
     setupErrorHandling() {
