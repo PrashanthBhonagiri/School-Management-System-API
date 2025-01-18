@@ -4,6 +4,10 @@ const helmet = require('helmet');
 const { envConfig } = require('../../config');
 const errorHandler = require('../../core/middleware/error.middleware');
 const databaseConnection = require('../../infrastructure/database/mongoose.connection');
+const { responseMiddleware } = require('../../infrastructure/utils/response');
+const { requestLogger } = require('../../infrastructure/utils/logger');
+const rateLimits = require('../../infrastructure/middleware/rate.limiter');
+const apiLogger = require('../../infrastructure/middleware/api.logger');
 
 class App {
     constructor() {
@@ -23,6 +27,12 @@ class App {
         this.app.use(cors());
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: true }));
+        // this.app.use(apiLogger); 
+        this.app.use(requestLogger);
+        this.app.use(responseMiddleware);
+        this.app.use(rateLimits.default); // Apply default rate limit
+        this.app.use('/api/auth', rateLimits.auth);
+        this.app.use('/api', rateLimits.api);
     }
 
     setupRoutes() {
